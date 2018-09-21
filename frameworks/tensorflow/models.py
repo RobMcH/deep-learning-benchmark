@@ -12,8 +12,7 @@ class tensorflow_base:
         phase_train = False
         data_format = 'NCHW'
         data_type = tf.float32 if precision == 'fp32' else tf.float16
-        self.batch_size = batch_size
-        image_shape = [self.batch_size, 3, image_shape[0], image_shape[1]]
+        image_shape = [batch_size, 3, image_shape[0], image_shape[1]]
         nclass = 1000
         use_tf_layers = False
 
@@ -34,7 +33,7 @@ class tensorflow_base:
         self.initializer = tf.global_variables_initializer()
 
     def eval(self, num_iterations, num_warmups):
-        fps = []
+        durations = []
         with tf.Session() as sess:
             sess.run(self.initializer)
             for i in range(num_iterations + num_warmups):
@@ -43,11 +42,11 @@ class tensorflow_base:
                 t2 = time()
                 print(t2 - t1)
                 if i >= num_warmups:
-                    fps.append(1000.0 / ((t2 - t1) / self.batch_size))
-        return fps
+                    durations.append(t2 - t1)
+        return durations
 
     def train(self, num_iterations, num_warmups):
-        fps = []
+        durations = []
         with tf.Session() as sess:
             sess.run(self.initializer)
             for i in range(num_iterations + num_warmups):
@@ -56,8 +55,8 @@ class tensorflow_base:
                 t2 = time()
                 print(t2 - t1)
                 if i >= num_warmups:
-                    fps.append(1000.0 / ((t2 - t1) / self.batch_size))
-        return fps
+                    durations.append(t2 - t1)
+        return durations
 
 class vgg16(tensorflow_base):
 
