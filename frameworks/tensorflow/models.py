@@ -40,7 +40,6 @@ class tensorflow_base:
                 t1 = time()
                 sess.run(self.logits)
                 t2 = time()
-                print(t2 - t1)
                 if i >= num_warmups:
                     durations.append(t2 - t1)
         return durations
@@ -53,7 +52,6 @@ class tensorflow_base:
                 t1 = time()
                 sess.run(self.grad)
                 t2 = time()
-                print(t2 - t1)
                 if i >= num_warmups:
                     durations.append(t2 - t1)
         return durations
