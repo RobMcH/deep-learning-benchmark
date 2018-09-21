@@ -32,7 +32,8 @@ class Benchmark():
         framework_model = self.get_framework_model(framework, model)(precision, image_shape, batch_size)
         durations = framework_model.eval(num_iterations, num_warmups) if mode == 'eval' else framework_model.train(num_iterations, num_warmups)
         durations = np.array(durations)
-        return durations.mean() * 1000
+        fps = durations.mean() / batch_size
+        return fps
 
     def benchmark_all(self):
         results = OrderedDict()
@@ -51,8 +52,8 @@ class Benchmark():
                 else:
                     eval_duration = self.benchmark_model('eval', framework, model, precision)
                     train_duration = self.benchmark_model('train', framework, model, precision)
-                print("{}'s {} eval at {}: {}ms avg".format(framework, model, precision, round(eval_duration, 1)))
-                print("{}'s {} train at {}: {}ms avg".format(framework, model, precision, round(train_duration, 1)))
+                print("{}'s {} eval at {}: {} fps avg".format(framework, model, precision, round(eval_duration, 1)))
+                print("{}'s {} train at {}: {} fps avg".format(framework, model, precision, round(train_duration, 1)))
                 results[precision].append(eval_duration)
                 results[precision].append(train_duration)
 
