@@ -56,4 +56,4 @@ class Benchmark():
 
 if __name__ == '__main__':
     results = Benchmark().benchmark_framework("tensorflow")
-    pickle.dump(results, open('{}_results.pkl'.format(args.framework), 'wb'))
+    pickle.dump(results, open('{}_results.pkl'.format("tensorflow"), 'wb'))
