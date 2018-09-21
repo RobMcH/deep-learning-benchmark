@@ -6,15 +6,11 @@ import pickle
 import numpy as np
 
 frameworks = [
-    'pytorch',
-    'tensorflow',
-    'caffe2'
+    'tensorflow'
 ]
 
 models = [
-    'vgg16',
-    'resnet152',
-    'densenet161'
+    'resnet152'
 ]
 
 precisions = [
@@ -32,7 +28,7 @@ class Benchmark():
         framework_model = self.get_framework_model(framework, model)(precision, image_shape, batch_size)
         durations = framework_model.eval(num_iterations, num_warmups) if mode == 'eval' else framework_model.train(num_iterations, num_warmups)
         durations = np.array(durations)
-        fps = durations.mean() / batch_size
+        fps = 1000.0 / ((durations.mean() * 1000) / batch_size)
         return fps
 
     def benchmark_all(self):
@@ -56,23 +52,8 @@ class Benchmark():
                 print("{}'s {} train at {}: {} fps avg".format(framework, model, precision, round(train_duration, 1)))
                 results[precision].append(eval_duration)
                 results[precision].append(train_duration)
-
         return results
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-f', dest='framework', required=False)
-    args = parser.parse_args()
-
-    if args.framework:
-        print('running benchmark for framework', args.framework)
-        results = Benchmark().benchmark_framework(args.framework)
-        pickle.dump(results, open('{}_results.pkl'.format(args.framework), 'wb'))
-    else:
-        print('running benchmark for frameworks', frameworks)
-        results = Benchmark().benchmark_all()
-        pickle.dump(results, open('all_results.pkl', 'wb'))
-
-
-
-
+    results = Benchmark().benchmark_framework("tensorflow")
+    pickle.dump(results, open('{}_results.pkl'.format(args.framework), 'wb'))
